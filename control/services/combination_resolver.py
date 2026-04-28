@@ -19,20 +19,33 @@ def _fill_matrix(
     return copied
 
 
+def _try_placement(
+    matrix: list[list[int]],
+    blanks: list[tuple[int, int]],
+    values: list[int],
+) -> list[int] | None:
+    filled = _fill_matrix(matrix, blanks, values)
+    if not is_magic_square(filled):
+        return None
+
+    (r1, c1), (r2, c2) = blanks
+    n1, n2 = values
+    return [r1 + 1, c1 + 1, n1, r2 + 1, c2 + 1, n2]
+
+
 def resolve_combination(matrix: list[list[int]]) -> list[int]:
     """Resolve and return int[6] output."""
-    (r1, c1), (r2, c2) = blanks = find_blank_cells(matrix)
-    n1, n2 = missing = find_missing_numbers(matrix)
+    blanks = find_blank_cells(matrix)
+    missing = find_missing_numbers(matrix)
 
-    forward_filled = _fill_matrix(matrix, blanks, missing)
-    if is_magic_square(forward_filled):
-        return [r1 + 1, c1 + 1, n1, r2 + 1, c2 + 1, n2]
+    forward_result = _try_placement(matrix, blanks, missing)
+    if forward_result is not None:
+        return forward_result
 
     reversed_missing = list(reversed(missing))
-    reverse_filled = _fill_matrix(matrix, blanks, reversed_missing)
-    if is_magic_square(reverse_filled):
-        rn1, rn2 = reversed_missing
-        return [r1 + 1, c1 + 1, rn1, r2 + 1, c2 + 1, rn2]
+    reverse_result = _try_placement(matrix, blanks, reversed_missing)
+    if reverse_result is not None:
+        return reverse_result
 
     raise ValueError(E_NO_VALID_COMBINATION)
 
