@@ -71,6 +71,12 @@ def test_task_005_find_blank_cells_returns_row_major_positions() -> None:
     assert find_blank_cells(matrix) == [(0, 2), (3, 3)]
 
 
+def test_task_005a_validate_input_rejects_non_4x4_matrix() -> None:
+    matrix = [[1, 2], [3, 0]]
+    with pytest.raises(ValueError, match=E_MATRIX_SIZE):
+        validate_input(matrix)
+
+
 def test_task_006_find_missing_numbers_returns_sorted_pair() -> None:
     matrix = _valid_magic_with_two_blanks()
     assert find_missing_numbers(matrix) == [1, 3]
